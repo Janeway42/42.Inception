@@ -8,7 +8,7 @@
 # Starts the MariaDB server in the foreground with the specified user and console output.
 # If the database is already set up, the script proceeds directly to starting the MariaDB server.
 
-if [ ! -d /run/mysqld ] #looks to see if the database is not already set up
+if [ ! -d /run/mysqld ] #if the database is not already set up
 then
 
 	echo "Setting up MariaDB"

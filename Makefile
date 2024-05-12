@@ -1,42 +1,46 @@
-all : up
+# all: 
+# create directories for data storage 
+# -p creates the intermediary directories if they don't exist
+# start the services in detached mode
+# https://docs.docker.com/compose/reference/
+# https://docs.docker.com/engine/reference/commandline/compose_up/
+# https://linuxhint.com/docker-remove-orphans/
+all:
+	mkdir -p /home/cpopa/data/mariadb
+	mkdir -p /home/cpopa/data/wordpress
+	sudo docker-compose -f srcs/docker-compose.yml up --build -d --remove-orphans
+	@echo "All sistems go!"
 
-up : 
-	@docker-compose -f ./srcs/docker-compose.yml up -d #docker compose file file_name detached_mode
+# kill:
+# stop and kill
+kill:
+	sudo docker-compose -f srcs/docker-compose.yml stop
+	sudo docker-compose -f srcs/docker-compose.yml kill
 
-down : 
-	@docker-compose -f ./srcs/docker-compose.yml down
+# clean:
+# down: stops containers and removes containers, networks, volumes, and images created by up
+clean:
+	sudo docker-compose -f srcs/docker-compose.yml down
+	sudo rm -rf /home/cpopa/data/
+	@echo "All cleaned up!"
 
-stop : 
-	@docker-compose -f ./srcs/docker-compose.yml stop
-
-start : 
-	@docker-compose -f ./srcs/docker-compose.yml start
-
-status : 
+status: 
 	@docker ps
 
+# mariadb
+# show databases
+maria-show:
+	@docker exec -it mariadb bash -c "mysql -u root -p -e 'SHOW DATABASES;'"
 
-NAME = inception
+# show mariadb logs 
+maria-logs:
+	@docker logs mariadb
 
-all:
-	sudo docker-compose -f ./srcs/docker-compose.yml up  -d 
-	# docker-compose up --build -d --remove orphans
-	# https://docs.docker.com/compose/reference/
-	# https://docs.docker.com/engine/reference/commandline/compose_up/
+# wordpress
+# show containers
+wp-docker:
+	@docker ps -a | grep wordpress
 
-stop:
-	sudo docker-compose -f ./srcs/docker-compose.yml down 
-	# stops containers and removes containers, networks, volumes, and images created by docker-compose up,
-
-kill:
-	sudo docker-compose -f ./srcs/docker-compose.yml kill 
-	# forces running containers to stop by sending a SIGKILL signal
-
-clean:
-	sudo docker-compose -f ./srcs/docker-compose.yml down 
-	# stops containers and removes containers, networks, volumes, and images created by docker-compose up
-
-status:
-	sudo docker ps
-
-
+# show logs
+wp-logs:
+	@docker logs wordpress
