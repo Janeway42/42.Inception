@@ -1,0 +1,20 @@
+#!/bin/bash
+
+if [ ! -f "/var/lib/mysql/$DB_NAME" ]
+then
+cat << EOF > /etc/mysql/init.sql 
+    CREATE DATABASE IF NOT EXISTS $DB_NAME;
+    CREATE USER '$DB_USER'@'%' IDENTIFIED BY '$DB_USER_PASS';
+    GRANT ALL PRIVILEGES ON *.* TO '$DB_USER'@'%' WITH GRANT OPTION;
+    FLUSH PRIVILEGES;
+    CREATE USER '$WP_USER1'@'%' IDENTIFIED BY '$WP_USER1_PASS';
+    GRANT ALL PRIVILEGES ON *.* TO '$WP_USER1'@'%' WITH GRANT OPTION;
+    FLUSH PRIVILEGES;
+    CREATE USER '$WP_USER2'@'%' IDENTIFIED BY '$WP_USER2_PASS';
+    GRANT ALL PRIVILEGES ON *.* TO '$WP_USER2'@'%' WITH GRANT OPTION;
+    FLUSH PRIVILEGES;
+EOF
+fi
+    mysql_install_db
+    echo "MariaDB up and running"
+    mysqld
