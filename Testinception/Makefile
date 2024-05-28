@@ -7,17 +7,16 @@ all:
 clean:
 	sudo docker-compose -f srcs/docker-compose.yml down
 	# sudo rm -rf ./srcs/web
-	@echo "Containers cleanned up!"
+	@echo "Containers down and out!"
 
-superclean:
-	# sudo docker-compose -f srcs/docker-compose.yml down
-	# sudo rm -rf ./srcs/web
+squicky:
+	sudo docker stop $$(sudo docker ps -qa) 2>/dev/null
+	sudo docker rm $$(sudo docker ps -qa) 2>/dev/null || true
+	sudo docker image prune -a --force 2>/dev/null
+	sudo docker volume rm $$(sudo docker volume ls -q) 2>/dev/null
+	sudo docker network prune --force 2>/dev/null || true
 	sudo rm -rf /home/cpopa/data
-	sudo docker image prune -a
-	# sudo docker remove $(sudo docker images -a | grep "nginx")
-	# sudo docker rmi $(sudo docker images -a | grep "mariadb")
-	# sudo docker rmi $(sudo docker images -a | grep "wordpress")
-	@echo "Super all cleanned up!"
+	@echo "All super squicky clean!"
 
 status:
 	sudo docker ps -a

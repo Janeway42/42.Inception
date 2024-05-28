@@ -1,8 +1,9 @@
 #!/bin/bash
 
-if [ ! -f ./var/www/html/wp-config.php ]
+cd /var/www/html
+# if [ ! -f ./var/www/html/wp-config.php ]
+if [ ! -f ./wp-config.php ]
 then
-    cd /var/www/html
     curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
     chmod +x wp-cli.phar
     ./wp-cli.phar core download --allow-root
