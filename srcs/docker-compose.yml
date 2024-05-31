@@ -1,75 +1,67 @@
-version: '3.7'
+version: "3.7"
 
-# service: A running container with definitions and configurations about how each container image will run.
 services:
-    # --------------------------------------------- MariaDB
-    mariadb:
-      container_name: mariadb
-      image: mariadb
-      build: requirements/mariadb # docker file from mariadb folder
-      network: 
-        - inception
-      restart: always
-      volumes:
-        - db:/var/lib/mysql  # Persistent database data using the "db" volume
-      env_file:
-        - ./.env
-
-    # --------------------------------------------- wordpress
-    wordpress: 
-      container_name: wordpress
-      image: wordpress
-      build: requirements/wordpress # docker file from wordpress folder 
-      network: 
-        - inception
-      restart: always
-      volumes:
-        - wp:/var/www/wordpress  # Mount WordPress files with the "wp" volume
-      depends_on: 
-        - mariadb
-      env_file: 
-        - ./env
-
-    # --------------------------------------------- nginx
-    nginx:
-        container_name: nginx
-        image: node:18.16.0
-        build: requirements/nginx # docker file from nginx folder 
-        network: 
-          - inception
-        restart: always
-        depends_on: 
-          - wordpress
-        ports:
-            - 443:443
-        working_dir: /backend
-        volumes:
-          - wp:/var/www/wordpress  # Mount WordPress files with the "wp" volume
-        env_file:
-            - ./.env
-   
-# volumes:
-#      - ./<host_machine_dir_path>:/<container_data_dir_path>
-# This line specifies a volume mapping between a directory on the host machine (left side of the colon) and a data
-# directory inside the container (right side of the colon). This means that the contents of the host machine
-# directory will be synchronized/mounted into the directory inside the container.
-# This allows you to change the application code on your host machine and the changes will be reflected inside the
-# container, enabling live-reloading without rebuilding the container each time a change is made.
-
-volumes:
-  database:
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: /home/cpopa/data/mariadb  # Mount host directory for MariaDB data
-
+# ---------------------------------------- MariaDB
+  mariadb:
+    container_name: mariadb
+    image: mariadb
+    build: requirements/mariadb/.
+    networks:
+      - inception
+    restart: always
+    volumes:
+      - database:/var/lib/mysql
+    env_file:
+      - ./.env
+# ---------------------------------------- Wordpress
   wordpress:
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: /home/cpopa/data/wordpress  # Mount host directory for WordPress data
+    container_name: wordpress
+    image: wordpress
+    build: requirements/wordpress/.
+    networks:
+      - inception
+    restart: always
+    volumes:
+      - wordpress:/var/www/html
+    depends_on:
+      - mariadb
+    env_file:
+      - ./.env
+# ---------------------------------------- Nginx
+  nginx:
+    container_name: nginx
+    image: nginx
+    build: 
+      context: requirements/nginx/.
+    networks:
+      - inception
+    restart: always
+    ports:
+      - "443:443"
+    volumes:
+      - wordpress:/var/www/html
+    depends_on:
+      - wordpress
+    env_file:
+      - ./.env
 
+# ---------------------------------------- network
 networks:
   inception:
+    name: inception
+# ---------------------------------------- volumes
+volumes:
+  database:
+    name: database
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /home/cpopa/data/mariadb # mount host directory for MariaDB data
+  wordpress:
+    name: wordpress
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /home/cpopa/data/wordpress # mount host directory for Wordpress data
