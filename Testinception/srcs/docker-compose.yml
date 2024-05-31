@@ -19,7 +19,7 @@ services:
     image: wordpress
     build: requirements/wordpress/.
     networks:
-      inception:
+      - inception
     restart: always
     volumes:
       - wordpress:/var/www/html
@@ -34,7 +34,7 @@ services:
     build: 
       context: requirements/nginx/.
     networks:
-      inception:
+      - inception
     restart: always
     ports:
       - "443:443"
@@ -48,15 +48,18 @@ services:
 # ---------------------------------------- network
 networks:
   inception:
+    name: inception
 # ---------------------------------------- volumes
 volumes:
   database:
+    name: database
     driver: local
     driver_opts:
       type: none
       o: bind
       device: /home/cpopa/data/mariadb # mount host directory for MariaDB data
   wordpress:
+    name: wordpress
     driver: local
     driver_opts:
       type: none

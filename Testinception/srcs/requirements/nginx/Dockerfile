@@ -1,14 +1,13 @@
 FROM debian:bullseye
 
-RUN apt update -y && apt upgrade -y && apt install -y nginx \
+RUN apt-get update -y && apt-get upgrade -y && apt-get install -y nginx \
     openssl
 RUN apt-get -y install libfcgi0ldbl 
 
 RUN mkdir /etc/nginx/ssl
-RUN openssl req -x509 -nodes -newkey rsa:2048 -keyout /etc/nginx/ssl/cpopa.key -out /etc/nginx/ssl/cpopa.crt -subj "/CN=$DOMAIN_NAME"
+RUN openssl req -x509 -nodes -newkey rsa:2048 -keyout /etc/nginx/ssl/cpopa.key -out /etc/nginx/ssl/cpopa.crt -subj "/O=42 The Network/CN=cpopa.42.fr"
 
-# COPY ./conf/default /etc/nginx/sites-available/.
-COPY ./conf/nginx.conf /etc/nginx/conf.d/default.conf
+COPY ./conf/nginx.conf /etc/nginx/conf.d/nginx.conf
 
 EXPOSE 443 
 
